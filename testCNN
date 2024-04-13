@@ -1,0 +1,28 @@
+err = 0
+tot = 0
+with torch.no_grad():
+    for data in tqdm.tqdm(test_loader):
+        # retrieve X and y for this batch, from data, and
+        #   move it to the device you are using (probably the GPU)
+        X = data[0].to(device)
+        y = data[1].to(device)
+
+        # raw output of network for X
+        output = net(X)
+
+        # let the maximum index be our predicted class
+        _, yh = torch.max(output, 1)
+
+        # tot will 10,000 at the end, total number of test data
+        tot += y.size(0)
+
+        ##add to err number of missclassification, i.e. number of indices that
+        ## yh and y are not equal
+        ## note that y and yh are vectors of size = batch_size = (256 in our case)
+        err += (yh != y).sum()
+
+print('Accuracy of prediction on test digits: %5.2f%%' % (100-100 * err / tot))
+
+###ASSERTS
+assert((100-100 * err / tot)>=98)
+assert(tot==10*1000)
