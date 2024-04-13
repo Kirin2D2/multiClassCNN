@@ -1,0 +1,33 @@
+import torch.nn as nn
+import torch.nn.functional as F
+
+# 
+class ConvNet(nn.Module):
+    def __init__(self):
+        super(ConvNet, self).__init__()
+        self.conv1 = nn.Conv2d(1,32,5,padding=2)
+        self.pool1 = nn.MaxPool2d(2,2)
+        self.conv2 = nn.Conv2d(32,64,5,padding=2)
+        self.pool2 = nn.MaxPool2d(2,2)
+
+        # size of input is (64*7*7)
+        self.size_linear = 64*7*7
+        self.fc1 = nn.Linear(self.size_linear, 512)
+        self.fc2 = nn.Linear(512, 10)
+
+    def forward(self, x):
+        x = self.pool1(F.relu(self.conv1(x))) 
+        x = self.pool2(F.relu(self.conv2(x)))# apply the second convolution and max pooling
+        x = x.view(-1, self.size_linear) # this flattens x into a 1D vector
+        x = F.relu(self.fc1(x))# Apply the first fully connected layer and ReLU
+        x = self.fc2(x)# Apply the second fully connected layer (no ReLU)
+        return x
+
+##ASSERT: checks if CNN has the correct output shape
+with torch.no_grad():  # tells PyTorch not to track gradients here
+    # test_data is 100 random images, 1 channel, 28-by-28
+    test_data = torch.rand(100,1,28,28)
+    test_net = ConvNet()
+    out = test_net.forward(test_data)
+    # the output should have size (100,10)
+    assert(out.size()==(100,10))
