@@ -1,0 +1,7 @@
+### save model weights locally
+torch.save(net.state_dict(), 'model.pth')
+files.download('model.pth')
+
+## Load the local model.
+upload = files.upload()
+net.load_state_dict(torch.load('model.pth'))
