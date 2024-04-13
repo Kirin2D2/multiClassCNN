@@ -1,0 +1,32 @@
+# Setting some hyperparameters and making sure we have a GPU
+%matplotlib inline
+import numpy as np
+import torch
+import torch.nn as nn
+import torchvision
+import torchvision.transforms as transforms
+import random
+import tqdm
+import os
+from google.colab import files
+from torchviz import make_dot
+
+# Set the device to use
+device = torch.device("cpu")
+
+# If you'd like to use a GPU instead of a CPU to run the following code, you can uncomment the following line
+#device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+## Hyperparameters
+num_epochs = 10
+num_classes = 10  # there are 10 digits: 0 to 9
+batch_size = 256
+
+## Fixing Random Seed for Reproducibility
+torch.manual_seed(0)
+np.random.seed(0)
+random.seed(0)
+
+
+# This line prints out the type of device you will run the notebook in.
+print(str(device))
