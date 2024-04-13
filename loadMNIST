@@ -1,0 +1,16 @@
+from torch.utils.data import DataLoader
+
+# transforms to apply to the data, converting the data to PyTorch tensors and normalizing the data
+trans = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
+
+# MNIST dataset
+train_dataset = torchvision.datasets.MNIST(root="./data", train=True, transform=trans, download=True)
+test_dataset = torchvision.datasets.MNIST(root="./data", train=False, transform=trans)
+
+# train_loader returns batches of training data. See how train_loader is used in the Trainer class later
+train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True,num_workers=0)
+test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False,num_workers=0)
+
+##ASSERTS: checking whether the data is loaded as expected
+assert(len(train_loader)*batch_size >= 60000)
+assert(len(test_loader)*batch_size >=10000)
