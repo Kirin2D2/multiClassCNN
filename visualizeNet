@@ -1,0 +1,10 @@
+from IPython.display import Image
+
+test_data = torch.rand(100,1,28,28)
+test_net = ConvNet()
+out = test_net.forward(test_data)
+params= dict(test_net.named_parameters())
+dot = make_dot(out, params=params)
+dot.format = "png"
+dot.render(filename="network_graph")
+Image(filename="network_graph.png")
