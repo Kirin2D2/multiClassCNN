@@ -1,0 +1,61 @@
+import torch.optim as optim
+
+class Trainer():
+    def __init__(self,net=None,optim=None,loss_function=None, train_loader=None):
+        self.net = net
+        self.optim = optim
+        self.loss_function = loss_function
+        self.train_loader = train_loader
+
+    def train(self,epochs):
+        losses = []
+        for epoch in range(epochs):
+            epoch_loss = 0.0
+            epoch_steps = 0
+            for data in tqdm.tqdm(self.train_loader):
+
+                # Moving this batch to GPU
+                # Note that X has shape (batch_size, number of channels, height, width)
+                # which is equal to (256,1,28,28) since our default batch_size = 256 and
+                # the image has only 1 channel
+                X = data[0].to(device)
+                y = data[1].to(device)
+
+                # Set the gradient to zero in the optimizer i.e. self.optim
+                self.optim.zero_grad()
+
+
+                # Getting the output of the Network
+                output = self.net(X)
+
+                # Computing loss using loss function i.e. self.loss_function
+                loss = self.loss_function(output, y)
+
+                # Backpropagate to compute gradients of parameteres
+                loss.backward()
+
+                # Call the optimizer
+                self.optim.step()
+
+
+                epoch_loss += loss.item()
+                epoch_steps += 1
+            # average loss of epoch
+            losses.append(epoch_loss / epoch_steps)
+            print("epoch [%d]: loss %.3f" % (epoch+1, losses[-1]))
+        return losses
+
+
+learning_rate = 0.1
+
+net = ConvNet()
+net = net.to(device)
+opt = optim.SGD(net.parameters(), lr=learning_rate, momentum=0.9)
+loss_function = nn.CrossEntropyLoss()
+
+trainer = Trainer(net=net, optim=opt, loss_function=loss_function, train_loader=train_loader)
+
+losses = trainer.train(num_epochs)
+###ASSERTS
+assert(losses[-1] < 0.03)
+assert(len(losses)==num_epochs)  # because you record the loss after each epoch
